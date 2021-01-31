@@ -1,0 +1,32 @@
+{
+  "name": "tegobot",
+  "version": "0.1.0",
+  "description": "Bot de Discord dedicado a la reproducción de música",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tegocorp/tegobot.git"
+  },
+  "author": "Tegocorp",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tegocorp/tegobot/issues"
+  },
+  "homepage": "https://github.com/Tegocorp/tegobot#readme",
+  "devDependencies": {
+    "eslint": "^7.19.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "nodemon": "^2.0.7",
+    "prettier": "^2.2.1"
+  },
+  "dependencies": {
+    "discord.js": "^12.5.1",
+    "dotenv": "^8.2.0"
+  }
+}

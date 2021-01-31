@@ -1,0 +1,15 @@
+{
+  "env": {
+    "es6": true,
+    "node": true,
+    "commonjs": true
+  },
+  "extends": ["google", "prettier"],
+  "plugins": ["prettier"],
+  "parserOptions": {
+    "ecmaVersion": 2018
+  },
+  "rules": {
+    "prettier/prettier": "error"
+  }
+}
