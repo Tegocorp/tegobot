@@ -1,5 +1,5 @@
 {
-  "name": "Node.js",
+  "name": "tegobot-development",
   "build": {
     "dockerfile": "Dockerfile",
     "args": { "VARIANT": "14" }

@@ -1,3 +1,10 @@
+# General
+.DS_Store
+
+# Lavalink
+Lavalink.jar
+application.yml
+
 # Logs
 logs
 *.log
