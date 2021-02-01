@@ -1,41 +1,41 @@
-const { token, lavapass } = require('./config');
+const Reproductor = require('./Reproductor');
+const { prefijo, token } = require('./config');
 
+// const fs = require('fs');
 const Discord = require('discord.js');
-const { Manager } = require('lavacord');
-
-const nodes = [
-  {
-    id: '1',
-    host: 'localhost',
-    port: 2333,
-    password: lavapass,
-  },
-];
 
 const cliente = new Discord.Client();
+cliente.reproductor = new Reproductor();
+cliente.comandos = new Discord.Collection();
 
-cliente.on('ready', async () => {
-  cliente.reproductor = new Manager(nodes, {
-    user: cliente.user.id,
-    shards: 1,
-  });
-  await cliente.reproductor
-    .connect()
-    .then((res) => {
-      if (res)
-        console.log(`tegobot iniciado correctamente -> ${cliente.user.tag}.`);
-    })
-    .catch((err) =>
-      console.error(
-        `Ha ocurrido un error conectando con Lavalink -> ${err.message}`
-      )
-    );
+const iniciarComandos = () => {
+  const archivosComandos = fs
+    .readdirSync('./comandos')
+    .filter((file) => file.endsWith('.js'));
+  for (const archivo of archivosComandos) {
+    const comando = require(`./comandos/${archivo}`);
+    cliente.comandos.set(comando.nombre, comando);
+  }
+};
 
-  cliente.reproductor.on('error', (err, node) => {
-    console.log(
-      `Ha ocurrido el siguiente error -> ${err.message}, en el nodo ${node}`
-    );
-  });
+cliente.on('ready', () => {
+  iniciarComandos();
+  cliente.reproductor.iniciarLavalink();
+  cliente.reproductor.establecerIdCliente(cliente.user.id);
+
+  console.log(
+    `Tegobot se ha iniciado correctamente -> ${cliente.user.username}`
+  );
+});
+
+cliente.on('message', (msg) => {
+  if (!msg.content.startsWith(prefijo) || msg.author.bot) return;
+});
+
+cliente.reproductor.lavalink.on('error', (err, node) => {
+  console.log(
+    `Ha ocurrido el siguiente error -> ${err.message}, en el nodo ${node}`
+  );
 });
 
 cliente.login(token);
