@@ -1,10 +1,11 @@
 require('dotenv').config();
 
 module.exports = {
-  prefijo: '!',
+  prefix: '!',
   token: process.env.BOT_TOKEN,
+  botUserId: process.env.BOT_USER_ID,
   lavapassword: process.env.LAVALINK_PASSWORD,
-  nodos: [
+  nodes: [
     {
       id: '1',
       host: 'localhost',
