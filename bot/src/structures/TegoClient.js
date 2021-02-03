@@ -1,43 +1,54 @@
-const { botUserId, token, nodes } = require('../config');
+const { token, nodes } = require('../config');
 
-const { Manager } = require('lavacord');
+const { Manager } = require('erela.js');
 const { Client } = require('discord.js');
 
 /** Clase TegoClient */
-class TegoClient extends Client {
+module.exports = class TegoClient extends Client {
   /**
    * Constructor de la clase TegoClient
-   * @param {string} opt
+   * @param {Object} opt
    */
   constructor(opt) {
     super(opt);
-    this.manager = new Manager(nodes, {
-      user: botUserId,
-      shards: 1,
+    this.manager = new Manager({
+      nodes: nodes,
+      send: (id, payload) => {
+        const guild = this.guilds.cache.get(id);
+        if (guild) guild.shard.send(payload);
+      },
     });
   }
 
-  /** Inicializar Cliente discord.js con Lavalink */
+  /** Prepara los eventos del cliente */
+  _setupClientEvents() {
+    this.once('ready', () => {
+      this.manager.init(this.user.id);
+      console.log(`Tegobot se ha iniciado correctamente (${this.user.tag})`);
+    });
+
+    this.on('raw', (d) => this.manager.updateVoiceState(d));
+  }
+
+  /** Prepara los eventos del cliente erela  */
+  _setupManagerEvents() {
+    const nodeId = (node) => node.options.identifier;
+
+    this.manager.on('nodeConnect', (node) =>
+      console.log(`Nodo (${nodeId(node)}) de Lavalink conectado correctamente`)
+    );
+
+    this.manager.on('nodeError', (node, error) =>
+      console.log(
+        `Se ha encontrado un error en el nodo ${nodeId(node)}: ${error.message}`
+      )
+    );
+  }
+
+  /** Inicializa el cliente discord.js con Lavalink (erela) */
   initialize() {
     this.login(token);
-
-    this.on('ready', async () => {
-      console.log(`Tegobot se ha iniciado correctamente (${this.user.tag})`);
-      await this.manager.connect();
-    });
-
-    this.manager
-      .on('ready', (node) =>
-        console.log(
-          `La conexión con el nodo de Lavalink (id -> ${node.id}) está activa`
-        )
-      )
-      .on('error', (err, node) =>
-        console.log(
-          `Ha ocurrido el siguiente error -> ${err.message}, en el nodo ${node}`
-        )
-      );
+    this._setupClientEvents();
+    this._setupManagerEvents();
   }
-}
-
-module.exports = TegoClient;
+};
