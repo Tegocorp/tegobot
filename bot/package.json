@@ -26,7 +26,6 @@
     "prettier": "^2.2.1"
   },
   "dependencies": {
-    "axios": "^0.21.1",
     "discord.js": "github:discordjs/discord.js",
     "dotenv": "^8.2.0",
     "erela.js": "^2.3.2"

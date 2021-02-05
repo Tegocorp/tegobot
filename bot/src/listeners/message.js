@@ -74,11 +74,7 @@ module.exports = {
 
     // Realiza la ejecución del comando
     try {
-      if (!command.music) {
-        command.execute(msg, args);
-      } else {
-        command.execute(msg, args, client.manager);
-      }
+      command.execute(msg, args);
     } catch (error) {
       console.error(
         `Ha ocurrido un error al tratar de ejecutar el comando (${command}): ${error.message}`

@@ -64,6 +64,12 @@ module.exports = class TegoClient extends Client {
         `Ha ocurrido un error en el nodo (${nodeId(node)}): ${error.message}`
       )
     );
+
+    this.manager.on('queueEnd', (player) => {
+      const channel = this.channels.cache.get(player.textChannel);
+      channel.send('La cola ha terminado, saliendo del canal de voz.');
+      player.destroy();
+    });
   }
 
   /** Inicializa el cliente discord.js con Lavalink (erela) */
