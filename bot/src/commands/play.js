@@ -1,3 +1,5 @@
+const { MessageEmbed } = require('discord.js');
+
 module.exports = {
   name: 'music-play',
   args: true,
@@ -44,6 +46,8 @@ module.exports = {
       );
     }
 
+    const song = res.tracks[0];
+
     switch (res.loadType) {
       // Ejecuta cuando no ha encontrado resultados con los terminos introducidos
       case 'NO_MATCHES':
@@ -52,11 +56,29 @@ module.exports = {
       // Ejecuta cuando ha encontado resultados (url, consulta)
       case 'TRACK_LOADED':
       case 'SEARCH_RESULT':
-        player.queue.add(res.tracks[0]);
+        player.queue.add(song);
 
         if (!player.playing && !player.paused && !player.queue.size)
           player.play();
-        return msg.reply(`Añadiendo ${res.tracks[0].title} a la cola.`);
+
+        // Mensaje que se enviará al agregar una canción a la cola
+        const songAddEmbed = new MessageEmbed()
+          .setColor('#ffc3c3')
+          .addField(
+            'Agregado a la cola',
+            `${player.queue.totalSize} - [${song.title}](${song.uri})`
+          )
+          .setThumbnail(song.thumbnail)
+          .setFooter(`Solicitada por ${song.requester.username}`);
+        // Easteregg de Tego Calderón al reproducir una canción suya
+        if (song.title.toLowerCase().includes('tego')) {
+          playEmbed.addField(
+            'Frase de Tego Calderón',
+            'Yo soy el maracachimba, el feo de las nenas lindas.'
+          );
+        }
+
+        return msg.channel.send(songAddEmbed);
       // Ejecuta cuando se ha cargado la playlist introducida
       case 'PLAYLIST_LOADED':
         player.queue.add(res.tracks);
@@ -67,9 +89,17 @@ module.exports = {
           player.queue.totalSize === res.tracks.length
         )
           player.play();
-        return msg.reply(
-          `Añadiendo playlist ${res.playlist.name} | (${res.tracks.length}) a la cola.`
-        );
+
+        // Mensaje que se enviará al agregar una playlist a la cola
+        const playlistAddEmbed = new MessageEmbed()
+          .setColor('#ffc3c3')
+          .addField(
+            'Agregada playlist a la cola',
+            `${player.queue.totalSize} - [${res.playlist.name}](${search})`
+          )
+          .setFooter(`Solicitada por ${song.requester.username}`);
+
+        return msg.channel.send(playlistAddEmbed);
     }
   },
 };
