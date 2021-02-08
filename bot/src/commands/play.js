@@ -1,11 +1,11 @@
 const { MessageEmbed } = require('discord.js');
 
 module.exports = {
-  name: 'music-play',
+  name: 'play',
   args: true,
   cooldown: 5,
   guildOnly: true,
-  aliases: ['p', 'play'],
+  aliases: ['p', 'pl'],
   permissions: 'ADMINISTRATOR',
   usage: '[url] o [nombre canción]',
   description: 'Reproduce la canción introducida por el usuario.',
@@ -21,6 +21,7 @@ module.exports = {
 
     // Crea el reproductor
     const player = music.create({
+      selfDeafen: true,
       guild: msg.guild.id,
       voiceChannel: channel.id,
       textChannel: msg.channel.id,
@@ -68,7 +69,7 @@ module.exports = {
             'Agregado a la cola',
             `${player.queue.totalSize} - [${song.title}](${song.uri})`
           )
-          .setThumbnail(song.thumbnail)
+          .setThumbnail(song.displayThumbnail('mqdefault'))
           .setFooter(`Solicitada por ${song.requester.username}`);
         // Easteregg de Tego Calderón al reproducir una canción suya
         if (song.title.toLowerCase().includes('tego')) {

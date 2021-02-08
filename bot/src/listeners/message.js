@@ -77,7 +77,7 @@ module.exports = {
       command.execute(msg, args);
     } catch (error) {
       console.error(
-        `Ha ocurrido un error al tratar de ejecutar el comando (${command}): ${error.message}`
+        `Ha ocurrido un error al tratar de ejecutar el comando (${command.name}): ${error.message}`
       );
     }
   },
