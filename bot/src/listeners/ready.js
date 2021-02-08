@@ -2,8 +2,11 @@ module.exports = {
   name: 'ready',
   execute(client) {
     client.manager.init(client.user.id);
+
     console.log(
-      `Tegobot se ha iniciado correctamente (${client.user.tag}) en (${client.guilds.cache.size}) servidores`
+      `Conectado a (${client.guilds.cache.size}) servidores con TAG (${client.user.tag})`
     );
+
+    client.user.setActivity('!help', { type: 'LISTENING' });
   },
 };
