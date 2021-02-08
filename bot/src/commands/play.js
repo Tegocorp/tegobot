@@ -72,7 +72,7 @@ module.exports = {
           .setFooter(`Solicitada por ${song.requester.username}`);
         // Easteregg de Tego Calderón al reproducir una canción suya
         if (song.title.toLowerCase().includes('tego')) {
-          playEmbed.addField(
+          songAddEmbed.addField(
             'Frase de Tego Calderón',
             'Yo soy el maracachimba, el feo de las nenas lindas.'
           );
