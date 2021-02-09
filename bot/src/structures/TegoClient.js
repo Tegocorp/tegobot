@@ -36,47 +36,27 @@ module.exports = class TegoClient extends Client {
     }
   }
 
-  /** Prepara los eventos del cliente */
-  _setupClientEvents() {
-    const listenerFiles = fs
+  /** Prepara los eventos del cliente y erela */
+  _setupEventListeners() {
+    const listeners = fs
       .readdirSync(join(__dirname, '..', 'listeners'))
       .filter((file) => file.endsWith('.js'));
 
-    for (const file of listenerFiles) {
+    for (const file of listeners) {
       const listener = require(`../listeners/${file}`);
-      this.on(listener.name, (...args) => listener.execute(this, ...args));
+
+      if (listener.manager)
+        this.manager.on(listener.name, (...args) =>
+          listener.execute(this, ...args)
+        );
+      else this.on(listener.name, (...args) => listener.execute(this, ...args));
     }
-  }
-
-  /** Prepara los eventos del cliente erela  */
-  _setupManagerEvents() {
-    // Función que obtiene el identificador del nodo Lavalink
-    const nodeId = (node) => node.options.identifier;
-
-    this.manager.on('nodeConnect', (node) =>
-      console.log(
-        `Conectado al nodo de Lavalink (${nodeId(node)}) correctamente`
-      )
-    );
-
-    this.manager.on('nodeError', (node, error) =>
-      console.log(
-        `Ha ocurrido un error en el nodo (${nodeId(node)}): ${error.message}`
-      )
-    );
-
-    this.manager.on('queueEnd', (player) => {
-      const channel = this.channels.cache.get(player.textChannel);
-      channel.send('La cola ha terminado, saliendo del canal de voz.');
-      player.destroy();
-    });
   }
 
   /** Inicializa el cliente discord.js con Lavalink (erela) */
   initialize() {
     this.login(token);
-    this._setupClientEvents();
-    this._setupManagerEvents();
+    this._setupEventListeners();
     this.addCommandsToCollection();
   }
 };
