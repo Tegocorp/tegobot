@@ -1,7 +1,7 @@
 const { MessageEmbed } = require('discord.js');
 
 module.exports = {
-  name: 'stats',
+  name: 'status',
   description: 'Muestra el funcionamiento actual de los nodos Lavalink.',
   execute(msg) {
     // Obtiene array de todos los nodos cargados

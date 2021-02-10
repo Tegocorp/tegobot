@@ -10,97 +10,67 @@ module.exports = {
   usage: '[url] o [nombre canción]',
   description: 'Reproduce la canción introducida por el usuario.',
   async execute(msg, args) {
-    const music = msg.client.manager;
+    const { music } = msg.guild;
     const { channel } = msg.member.voice;
 
-    // Comprueba si el usuario se encuentra dentro de un canal de voz
     if (!channel)
       return msg.reply(
         'Necesitas unirte a un canal de voz para ejecutar este comando.'
       );
 
-    // Crea el reproductor
-    const player = music.create({
-      selfDeafen: true,
-      guild: msg.guild.id,
-      voiceChannel: channel.id,
-      textChannel: msg.channel.id,
-    });
+    music.connect(msg.channel.id, channel.id);
 
-    // Comprueba si ya se ha creado un reproductor en el servidor
-    if (player.state !== 'CONNECTED') player.connect();
+    const searchResults = await music.searchSong(args, msg.author);
 
-    let res;
-    const search = args.join(' ');
+    music
+      .playRequested(searchResults)
+      .then((res) => {
+        const player = music.player;
+        const song = searchResults.tracks[0];
 
-    try {
-      // Busca canciones mediante una consulta o URL
-      res = await player.search(search, msg.author);
-      // Comprueba si la busqueda ha fallado y elimina el reproductor
-      if (res.loadType === 'LOAD_FAILED') {
-        if (!player.queue.current) player.destroy();
-        throw res.exception;
-      }
-    } catch (error) {
-      return msg.reply(
-        `Ha ocurrido un error mientras se buscaba la canción: ${error.message}`
-      );
-    }
-
-    const song = res.tracks[0];
-
-    switch (res.loadType) {
-      // Ejecuta cuando no ha encontrado resultados con los terminos introducidos
-      case 'NO_MATCHES':
-        if (!player.queue.current) player.destroy();
-        return msg.reply('No se han encontrado resultados sobre tu busqueda.');
-      // Ejecuta cuando ha encontado resultados (url, consulta)
-      case 'TRACK_LOADED':
-      case 'SEARCH_RESULT':
-        player.queue.add(song);
-
-        if (!player.playing && !player.paused && !player.queue.size)
-          player.play();
-
-        // Mensaje que se enviará al agregar una canción a la cola
-        const songAddEmbed = new MessageEmbed()
-          .setColor('#ffc3c3')
-          .addField(
-            'Agregado a la cola',
-            `${player.queue.totalSize} - [${song.title}](${song.uri})`
-          )
-          .setThumbnail(song.displayThumbnail('mqdefault'))
-          .setFooter(`Solicitada por ${song.requester.username}`);
-        // Easteregg de Tego Calderón al reproducir una canción suya
-        if (song.title.toLowerCase().includes('tego')) {
-          songAddEmbed.addField(
-            'Frase de Tego Calderón',
-            'Yo soy el maracachimba, el feo de las nenas lindas.'
+        if (res === 'NO_MATCHES')
+          return msg.reply(
+            'No se han encontrado resultados sobre tu busqueda.'
           );
+        else if (res === 'TRACK_LOADED') {
+          // Mensaje que se enviará al agregar una canción a la cola
+          const songAddEmbed = new MessageEmbed()
+            .setColor('#ffc3c3')
+            .addField(
+              'Agregado a la cola',
+              `${player.queue.totalSize} - [${song.title}](${song.uri})`
+            )
+            .setThumbnail(song.displayThumbnail('mqdefault'))
+            .setFooter(`Solicitada por ${song.requester.username}`);
+          // Easteregg de Tego Calderón al reproducir una canción suya
+          if (song.title.toLowerCase().includes('tego')) {
+            songAddEmbed.addField(
+              'Frase de Tego Calderón',
+              'Yo soy el maracachimba, el feo de las nenas lindas.'
+            );
+          }
+
+          return msg.channel.send(songAddEmbed);
+        } else if (res === 'PLAYLIST_LOADED') {
+          // Mensaje que se enviará al agregar una playlist a la cola
+          const playlistAddEmbed = new MessageEmbed()
+            .setColor('#ffc3c3')
+            .addField(
+              'Agregada playlist a la cola',
+              `${player.queue.totalSize} - [${
+                searchResults.playlist.name
+              }](${args.join(' ')})`
+            )
+            .setFooter(`Solicitada por ${song.requester.username}`);
+
+          return msg.channel.send(playlistAddEmbed);
         }
-
-        return msg.channel.send(songAddEmbed);
-      // Ejecuta cuando se ha cargado la playlist introducida
-      case 'PLAYLIST_LOADED':
-        player.queue.add(res.tracks);
-
-        if (
-          !player.playing &&
-          !player.paused &&
-          player.queue.totalSize === res.tracks.length
-        )
-          player.play();
-
-        // Mensaje que se enviará al agregar una playlist a la cola
-        const playlistAddEmbed = new MessageEmbed()
-          .setColor('#ffc3c3')
-          .addField(
-            'Agregada playlist a la cola',
-            `${player.queue.totalSize} - [${res.playlist.name}](${search})`
-          )
-          .setFooter(`Solicitada por ${song.requester.username}`);
-
-        return msg.channel.send(playlistAddEmbed);
-    }
+      })
+      .catch((error) => {
+        console.log(error);
+        msg.reply(
+          `Ha ocurrido un error mientras se buscaba la canción: ${error.message}`
+        );
+      });
   },
 };

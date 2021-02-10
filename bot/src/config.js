@@ -3,7 +3,7 @@ require('dotenv').config();
 module.exports = {
   prefix: '!',
   token: process.env.BOT_TOKEN,
-  nodes: [
+  lavalinkNodes: [
     {
       host: 'localhost',
       password: process.env.LAVALINK_PASSWORD,

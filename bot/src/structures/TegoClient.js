@@ -3,7 +3,9 @@ const { join } = require('path');
 const { Manager } = require('erela.js');
 const { Client, Collection } = require('discord.js');
 
-const { nodes, token } = require('../config');
+require('../extensions');
+const repository = require('../repository');
+const { token, lavalinkNodes } = require('../config');
 
 /** Clase TegoClient */
 module.exports = class TegoClient extends Client {
@@ -13,10 +15,11 @@ module.exports = class TegoClient extends Client {
    */
   constructor(opt) {
     super(opt);
+    this.repository = repository;
     this.commands = new Collection();
     this.cooldowns = new Collection();
     this.manager = new Manager({
-      nodes: nodes,
+      nodes: lavalinkNodes,
       send: (id, payload) => {
         const guild = this.guilds.cache.get(id);
         if (guild) guild.shard.send(payload);
