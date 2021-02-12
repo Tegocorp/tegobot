@@ -1,5 +1,6 @@
-const { prefix } = require('../config');
 const { Collection } = require('discord.js');
+
+const { prefix: basePrefix } = require('../config');
 
 module.exports = {
   name: 'message',
@@ -8,10 +9,10 @@ module.exports = {
     const cooldowns = client.cooldowns;
 
     // Comprueba si es un mensaje válido para ser ejecutado
-    if (!msg.content.startsWith(prefix) || msg.author.bot) return;
+    if (!msg.content.startsWith(basePrefix) || msg.author.bot) return;
 
     // Obtiene el nombre del comando y los argumentos
-    const args = msg.content.slice(prefix.length).trim().split(/ +/);
+    const args = msg.content.slice(basePrefix.length).trim().split(/ +/);
     const commandName = args.shift().toLocaleLowerCase();
 
     const command =
@@ -41,7 +42,7 @@ module.exports = {
       let reply = `No has especificado ningún argumento ${msg.author}`;
 
       if (command.usage) {
-        reply += `\nEl uso adecuado sería: ${prefix}${commandName} ${command.usage}`;
+        reply += `\nEl uso adecuado sería: ${basePrefix}${commandName} ${command.usage}`;
       }
 
       return msg.channel.send(reply);

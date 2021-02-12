@@ -10,7 +10,9 @@ let db = null;
  */
 const connect = async () =>
   (db = await mongoose.connect('mongodb://localhost:27017/tegobot', {
+    useCreateIndex: true,
     useNewUrlParser: true,
+    useFindAndModify: false,
     useUnifiedTopology: true,
   }));
 

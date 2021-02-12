@@ -1,3 +1,5 @@
+const Music = require('../repository/mongo/models/Music');
+
 module.exports = class MusicManager {
   /**
    * Constructor de la clase MusicManager
@@ -5,8 +7,7 @@ module.exports = class MusicManager {
    */
   constructor(guild) {
     this.guild = guild;
-    this.textChannel = null;
-    this.voiceChannel = null;
+    this.serverData = null;
   }
 
   /** Devuelve el objeto cliente */
@@ -19,20 +20,16 @@ module.exports = class MusicManager {
     return this.client.manager.players.get(this.guild.id) || null;
   }
 
-  /** Establece todos los valores a su estado original */
-  setDefault() {
-    this.textChannel = null;
-    this.voiceChannel = null;
-  }
-
   /**
    * Realiza la conexión al canal de voz del usuario
    * @param {String} text
    * @param {String} voice
    */
-  connect(text, voice) {
+  async connect(text, voice) {
     // Comprueba si existe un reproductor en el servidor
     if (this.player) return;
+
+    // Futuro: await this.checkServerData();
 
     // Crea el reproductor
     const player = this.client.manager.create({
@@ -81,7 +78,7 @@ module.exports = class MusicManager {
       const player = this.player;
 
       switch (result.loadType) {
-        // Ejecuta cuando no ha encontrado resultados con los terminos introducidos
+        // Ejecuta cuando no ha encontrado resultados
         case 'NO_MATCHES':
           if (!player.queue.current) player.destroy();
 
@@ -109,5 +106,34 @@ module.exports = class MusicManager {
           return resolve('PLAYLIST_LOADED');
       }
     });
+  }
+
+  /** Comprueba si se ha creado el modelo Music */
+  async checkServerData() {
+    // Establece los datos del modelo en serverData
+    const setServerData = (data) => {
+      const model = {
+        guildId: data.guildId,
+        textChannel: data.textChannelId,
+        voiceChannel: data.voiceChannelId || null,
+      };
+
+      this.serverData = model;
+    };
+
+    // Busca si existen datos del servidor en la db
+    const musicModel = await Music.findOne({
+      guildId: this.guild.id,
+    });
+
+    if (musicModel) {
+      if (!this.serverData) setServerData(musicModel);
+    } else {
+      const newMusicModel = await Music.create({
+        guildId: this.guild.id,
+      });
+
+      setServerData(newMusicModel);
+    }
   }
 };
