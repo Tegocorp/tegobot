@@ -1,8 +1,8 @@
 const { MessageEmbed } = require('discord.js');
 
-const channelAddEmbed = (channel) =>
+const setupEmbed = (channel) =>
   new MessageEmbed()
-    .setColor('#ffc3c3')
+    .setColor('76AC00')
     .addField(
       'Canal de gestión creado',
       `Nombre del canal: ${channel}` +
@@ -10,4 +10,4 @@ const channelAddEmbed = (channel) =>
     )
     .setFooter('Para obtener ayuda sobre mis comandos debes utilizar !help');
 
-module.exports = { channelAddEmbed };
+module.exports = { setupEmbed };

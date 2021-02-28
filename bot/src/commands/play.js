@@ -2,16 +2,17 @@ const { playEmbeds } = require('../utils/embeds');
 
 module.exports = {
   name: 'play',
-  args: true,
-  cooldown: 5,
-  guildOnly: true,
+  music: true,
   aliases: ['p', 'pl'],
-  permissions: 'ADMINISTRATOR',
-  usage: '[url] o [nombre canción]',
   description: 'Reproduce la canción introducida por el usuario.',
   async execute(msg, args) {
-    const { music } = msg.guild;
     const { channel } = msg.member.voice;
+    const { music, channels } = msg.guild;
+
+    // Datos del servidor
+    const musicData = music.serverData;
+    // Obtiene el canal de gestión
+    const managementChannel = channels.cache.get(musicData.player.textChannel);
 
     // Comprueba si el usuario se encuentra en un canal de voz
     if (!channel)
@@ -19,7 +20,7 @@ module.exports = {
         'Necesitas unirte a un canal de voz para ejecutar este comando.'
       );
 
-    await music.connect(msg.channel.id, channel.id);
+    music.connect(musicData.player.textChannel, channel.id);
 
     const searchResults = await music.searchSong(args, msg.author);
 
@@ -36,19 +37,22 @@ module.exports = {
             );
           case 'TRACK_LOADED':
             // Mensaje que se enviará al agregar una canción a la cola
-            const songAddEmbed = playEmbeds.songAddEmbed(
-              song,
-              player.queue.totalSize
-            );
+            const songAdd = playEmbeds.songAdd(song, player.queue.totalSize);
+
+            // Mensaje que se enviará si el mensaje ha sido enviado fuera
+            const songAddOutside = playEmbeds.songAddOutside(managementChannel);
+
             // Easteregg de Tego Calderón al reproducir una canción suya
             if (song.title.toLowerCase().includes('tego')) {
-              songAddEmbed.addField(
+              songAdd.addField(
                 'Frase de Tego Calderón',
                 'Yo soy el maracachimba, el feo de las nenas lindas.'
               );
             }
 
-            return msg.channel.send(songAddEmbed);
+            if (this.noManagementChannel)
+              return msg.channel.send(songAddOutside);
+            else return msg.channel.send(songAdd);
           case 'PLAYLIST_LOADED':
             // Mensaje que se enviará al agregar una playlist a la cola
             const playlistAddEmbed = playEmbeds.playlistAddEmbed(

@@ -1,1 +1,1 @@
-require('./Guild');
+require('./TegoGuild');

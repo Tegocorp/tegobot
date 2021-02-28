@@ -2,8 +2,14 @@ module.exports = {
   name: 'queueEnd',
   manager: true,
   execute(client, player) {
-    const channel = client.channels.cache.get(player.textChannel);
-    channel.send('La cola ha terminado, saliendo del canal de voz.');
+    const { channels } = client;
+
+    // Obtiene el canal de gestión
+    const managementChannel = channels.cache.get(player.textChannel);
+
     player.destroy();
+    return managementChannel.send(
+      'La cola ha terminado, saliendo del canal de voz.'
+    );
   },
 };

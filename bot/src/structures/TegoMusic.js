@@ -1,13 +1,14 @@
 const Music = require('../repository/mongo/models/Music');
 
-module.exports = class MusicManager {
+module.exports = class TegoMusic {
   /**
-   * Constructor de la clase MusicManager
+   * Constructor de la clase TegoMusic
    * @param {Object} guild
    */
   constructor(guild) {
     this.guild = guild;
     this.serverData = null;
+    this.playerMessage = null;
   }
 
   /** Devuelve el objeto cliente */
@@ -25,11 +26,9 @@ module.exports = class MusicManager {
    * @param {String} text
    * @param {String} voice
    */
-  async connect(text, voice) {
+  connect(text, voice) {
     // Comprueba si existe un reproductor en el servidor
     if (this.player) return;
-
-    // Futuro: await this.checkServerData();
 
     // Crea el reproductor
     const player = this.client.manager.create({
@@ -112,10 +111,16 @@ module.exports = class MusicManager {
   async checkServerData() {
     // Establece los datos del modelo en serverData
     const setServerData = (data) => {
+      const playerData = data.playerData;
+
       const model = {
         guildId: data.guildId,
-        textChannel: data.textChannelId,
-        voiceChannel: data.voiceChannelId || null,
+        configured: data.configured,
+        player: {
+          message: playerData.messageId,
+          textChannel: playerData.textChannelId,
+          voiceChannel: playerData.voiceChannelId || null,
+        },
       };
 
       this.serverData = model;
@@ -127,7 +132,7 @@ module.exports = class MusicManager {
     });
 
     if (musicModel) {
-      if (!this.serverData) setServerData(musicModel);
+      setServerData(musicModel);
     } else {
       const newMusicModel = await Music.create({
         guildId: this.guild.id,
@@ -135,5 +140,20 @@ module.exports = class MusicManager {
 
       setServerData(newMusicModel);
     }
+  }
+
+  /** Obtiene el mensaje de gestión del servidor */
+  async fetchPlayerMessage() {
+    const { channels } = this.guild;
+
+    // Datos del servidor
+    const musicData = this.serverData;
+    // Obtiene el canal de gestión
+    const managementChannel = channels.cache.get(musicData.player.textChannel);
+
+    if (!this.playerMessage)
+      this.playerMessage = await managementChannel.messages.cache.get(
+        musicData.player.message
+      );
   }
 };

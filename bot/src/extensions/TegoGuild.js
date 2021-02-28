@@ -1,5 +1,5 @@
 const { Structures } = require('discord.js');
-const MusicManager = require('../structures/MusicManager');
+const TegoMusic = require('../structures/TegoMusic');
 
 const Guild = Structures.get('Guild');
 
@@ -12,7 +12,7 @@ class TegoGuild extends Guild {
    */
   constructor(client, data) {
     super(client, data);
-    this.music = new MusicManager(this);
+    this.music = new TegoMusic(this);
   }
 }
 

@@ -1,50 +1,39 @@
 const { setupEmbeds } = require('../utils/embeds');
-
 const Music = require('../repository/mongo/models/Music');
 
 module.exports = {
   name: 'setup',
-  guildOnly: true,
-  permissions: 'ADMINISTRATOR',
+  music: true,
   description: 'Configuración inicial para la reproducción de música.',
   async execute(msg) {
     const { music, channels } = msg.guild;
 
-    await music.checkServerData();
-    const serverData = music.serverData;
+    // Datos del servidor
+    const musicData = music.serverData;
+    // Obtiene el canal de gestión
+    const managementChannel = channels.cache.get(musicData.player.textChannel);
 
-    // Comprueba si aún no existe textChannel en el servidor
-    if (serverData.guildId && !serverData.textChannel) {
-      // Crea el canal de texto donde se interactuará con el bot
+    // Comprueba si el servidor ya ha sido configurado anteriormente
+    if (musicData.guildId && !musicData.configured) {
       channels.create('tego-music', 'text').then(async (channel) => {
-        // Añade los datos del nuevo canal de texto
-        serverData.textChannel = channel.id;
+        const musicFilter = { guildId: musicData.guildId };
+        const musicUpdate = {
+          configured: true,
+          'playerData.textChannelId': channel.id,
+        };
 
-        const filter = { guildId: serverData.guildId };
-        const update = { $set: { textChannelId: channel.id } };
+        await Music.findOneAndUpdate(musicFilter, musicUpdate);
 
-        await Music.findOneAndUpdate(filter, update);
-
-        // Envía el mensaje de creación
-        return msg.channel.send(setupEmbeds.channelAddEmbed(channel));
+        // Envía el mensaje de confirmación
+        const setupEmbed = setupEmbeds.setupEmbed(channel.toString());
+        return msg.channel.send(setupEmbed);
       });
     } else {
-      const channel = channels.cache.get(serverData.textChannel);
-
-      if (channel)
-        // Envía el canal en caso de ya existir
+      if (managementChannel)
         return msg.reply(
           'Este servidor ya ha sido configurado anteriormente.\n' +
-            `Puedes interactuar conmigo en el siguiente canal ${channel}`
+            `Puedes interactuar conmigo en el siguiente canal ${managementChannel.toString()}`
         );
-      else {
-        // Comprueba si el canal de gestión ha sido eliminado
-        await Music.deleteOne({ guildId: serverData.guildId });
-
-        return msg.reply(
-          'El canal de gestión ha sido eliminado, por favor, vuelve a ejecutar **!setup**'
-        );
-      }
     }
   },
 };

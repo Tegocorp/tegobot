@@ -6,9 +6,14 @@ module.exports = {
   description: 'Salta a la siguiente canción de la cola.',
   execute(msg) {
     const { channel } = msg.member.voice;
+
     const player = msg.client.manager.get(msg.guild.id);
     // Comprueba si existen reproductores en el servidor
-    if (!player) return msg.reply('No hay reproductores en este servidor.');
+    if (!player)
+      return msg.reply(
+        'No hay reproductores en este servidor.\n' +
+          'Utiliza el comando **!play** para empezar a escuchar música.'
+      );
 
     // Comprueba si el usuario se encuentra dentro de un canal de voz
     if (!channel)
