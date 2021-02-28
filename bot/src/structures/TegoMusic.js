@@ -151,9 +151,12 @@ module.exports = class TegoMusic {
     // Obtiene el canal de gestión
     const managementChannel = channels.cache.get(musicData.player.textChannel);
 
-    if (!this.playerMessage)
+    if (!this.playerMessage) {
+      await managementChannel.messages.fetch();
+
       this.playerMessage = await managementChannel.messages.cache.get(
         musicData.player.message
       );
+    }
   }
 };

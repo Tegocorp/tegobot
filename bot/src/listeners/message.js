@@ -36,7 +36,7 @@ module.exports = {
             'Para reproducir música debes configurar el servidor con `!setup`'
         );
       } else {
-        await music.fetchPlayerMessage();
+        if (managementChannel) await music.fetchPlayerMessage();
 
         if (msg.channel.id !== musicData.player.textChannel)
           command.noManagementChannel = true;

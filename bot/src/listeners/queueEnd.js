@@ -1,15 +1,19 @@
+const { playerEmbeds } = require('../utils/embeds');
+
 module.exports = {
   name: 'queueEnd',
   manager: true,
   execute(client, player) {
-    const { channels } = client;
+    const guild = client.guilds.cache.get(player.guild);
 
-    // Obtiene el canal de gestión
-    const managementChannel = channels.cache.get(player.textChannel);
+    const { music } = guild;
+
+    // Mensaje de gestión
+    const playerMessage = music.playerMessage;
 
     player.destroy();
-    return managementChannel.send(
-      'La cola ha terminado, saliendo del canal de voz.'
-    );
+
+    const playerEmbed = playerEmbeds.player();
+    return playerMessage.edit(playerEmbed);
   },
 };

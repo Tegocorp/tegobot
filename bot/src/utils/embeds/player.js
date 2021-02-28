@@ -3,6 +3,16 @@ const { MessageEmbed } = require('discord.js');
 const player = () =>
   new MessageEmbed()
     .setColor('#ffc3c3')
-    .setFooter(`Hola buenas tardes saludos`);
+    .setTitle('No hay canciones reproduciendo')
+    .setFooter('Para obtener ayuda sobre mis comandos debes utilizar !help');
 
-module.exports = { player };
+const playerWithContent = (song, volume, queueSize) =>
+  new MessageEmbed()
+    .setColor('#ffc3c3')
+    .addField('Reproduciendo', `[${song.title}](${song.uri})`)
+    .setImage(song.displayThumbnail('hqdefault'))
+    .setFooter(
+      `Tamaño de cola: ${queueSize} - Volumen: ${volume}% - Solicitada por ${song.requester.username}`
+    );
+
+module.exports = { player, playerWithContent };
