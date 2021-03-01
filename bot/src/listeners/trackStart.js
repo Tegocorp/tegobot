@@ -14,7 +14,7 @@ module.exports = {
     const playerWithContent = playerEmbeds.playerWithContent(
       track,
       player.volume,
-      1
+      player.queue.size + 1
     );
     return playerMessage.edit(playerWithContent);
   },

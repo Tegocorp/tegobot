@@ -1,30 +1,44 @@
+const { getArgs } = require('../utils/index');
 const { prefix: basePrefix } = require('../config');
 
 module.exports = {
   name: 'message',
   async execute(client, msg) {
-    // Comprueba si el comando debe ejecutarse
-    if (!msg.content.startsWith(basePrefix) || msg.author.bot) return;
-
-    // Obtiene el nombre del comando y los argumentos
-    const args = msg.content.slice(basePrefix.length).trim().split(/ +/);
-    const commandName = args.shift().toLocaleLowerCase();
-
-    // Obtiene el comando introducido por el usuario
     const commands = client.commands;
+    const { music, channels } = msg.guild;
+
+    if (!music.serverData) await music.checkServerData();
+
+    // Datos del servidor
+    const musicData = music.serverData;
+
+    // Comprueba si el comando debe ejecutarse
+    if (!msg.content.startsWith(basePrefix) || msg.author.bot) {
+      // Comprueba si el mensaje ha sido enviado en el canal de gestión
+      if (msg.channel.id === musicData.player.textChannel) {
+        await music.fetchPlayerMessage();
+        const playerCommand = commands.get('play');
+
+        playerCommand.isManagementChannel = true;
+
+        // Realiza la ejecución del comando play
+        const query = getArgs(msg.content, basePrefix);
+        return playerCommand.execute(msg, query);
+      } else return;
+    }
+
+    // Obtiene los argumentos
+    const args = getArgs(msg.content, basePrefix);
+    // Obtiene el nombre del comando
+    const commandName = args.shift().toLocaleLowerCase();
+    // Obtiene el comando introducido por el usuario
     const command =
       commands.get(commandName) ||
       commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
 
     if (!command) return;
 
-    // Comprueba si debe actualizar los datos del servidor
     if (command.music) {
-      const { music, channels } = msg.guild;
-      await music.checkServerData();
-
-      // Datos del servidor
-      const musicData = music.serverData;
       // Obtiene el canal de gestión
       const managementChannel = channels.cache.get(
         musicData.player.textChannel
@@ -38,8 +52,9 @@ module.exports = {
       } else {
         if (managementChannel) await music.fetchPlayerMessage();
 
-        if (msg.channel.id !== musicData.player.textChannel)
-          command.noManagementChannel = true;
+        if (msg.channel.id === musicData.player.textChannel)
+          command.isManagementChannel = true;
+        else command.isManagementChannel = false;
       }
     }
 

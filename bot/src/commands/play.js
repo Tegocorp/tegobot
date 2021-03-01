@@ -1,8 +1,10 @@
+const { sendMessage } = require('../utils');
 const { playEmbeds } = require('../utils/embeds');
 
 module.exports = {
   name: 'play',
   music: true,
+  deleteMsg: true,
   aliases: ['p', 'pl'],
   description: 'Reproduce la canción introducida por el usuario.',
   async execute(msg, args) {
@@ -50,9 +52,16 @@ module.exports = {
               );
             }
 
-            if (this.noManagementChannel)
-              return msg.channel.send(songAddOutside);
-            else return msg.channel.send(songAdd);
+            if (this.isManagementChannel) {
+              return msg.delete();
+            } else {
+              return sendMessage(
+                msg,
+                'default',
+                songAddOutside,
+                this.deleteMsg
+              );
+            }
           case 'PLAYLIST_LOADED':
             // Mensaje que se enviará al agregar una playlist a la cola
             const playlistAddEmbed = playEmbeds.playlistAddEmbed(

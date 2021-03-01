@@ -9,7 +9,7 @@ const player = () =>
 const playerWithContent = (song, volume, queueSize) =>
   new MessageEmbed()
     .setColor('#ffc3c3')
-    .addField('Reproduciendo', `[${song.title}](${song.uri})`)
+    .addField('Reproduciendo de YouTube', `[${song.title}](${song.uri})`)
     .setImage(song.displayThumbnail('hqdefault'))
     .setFooter(
       `Tamaño de cola: ${queueSize} - Volumen: ${volume}% - Solicitada por ${song.requester.username}`

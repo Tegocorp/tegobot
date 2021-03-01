@@ -151,7 +151,9 @@ module.exports = class TegoMusic {
     // Obtiene el canal de gestión
     const managementChannel = channels.cache.get(musicData.player.textChannel);
 
+    // Comprueba si debe de añadir los datos del canal de gestión
     if (!this.playerMessage) {
+      // Obtiene los mensajes del canal en caso de no estár en cache
       await managementChannel.messages.fetch();
 
       this.playerMessage = await managementChannel.messages.cache.get(
