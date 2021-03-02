@@ -1,8 +1,8 @@
 module.exports = {
   name: 'skip',
-  guildOnly: true,
+  music: true,
+  deleteMsg: true,
   aliases: ['s', 'sk'],
-  permissions: 'ADMINISTRATOR',
   description: 'Salta a la siguiente canción de la cola.',
   execute(msg) {
     const { channel } = msg.member.voice;

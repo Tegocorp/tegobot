@@ -7,7 +7,7 @@ module.exports = {
     const commands = client.commands;
     const { music, channels } = msg.guild;
 
-    if (!music.serverData) await music.checkServerData();
+    await music.checkServerData();
 
     // Datos del servidor
     const musicData = music.serverData;
@@ -15,7 +15,7 @@ module.exports = {
     // Comprueba si el comando debe ejecutarse
     if (!msg.content.startsWith(basePrefix) || msg.author.bot) {
       // Comprueba si el mensaje ha sido enviado en el canal de gestión
-      if (msg.channel.id === musicData.player.textChannel) {
+      if (msg.channel.id === musicData.player.textChannel && !msg.author.bot) {
         await music.fetchPlayerMessage();
         const playerCommand = commands.get('play');
 
