@@ -15,7 +15,7 @@ module.exports = {
     // Comprueba si el comando debe ejecutarse
     if (!msg.content.startsWith(basePrefix) || msg.author.bot) {
       // Comprueba si el mensaje ha sido enviado en el canal de gestión
-      if (msg.channel.id === musicData.player.textChannel && !msg.author.bot) {
+      if (!msg.author.bot && msg.channel.id === musicData.player.textChannel) {
         await music.fetchPlayerMessage();
         const playerCommand = commands.get('play');
 

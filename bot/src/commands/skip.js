@@ -33,4 +33,21 @@ module.exports = {
     player.stop();
     return msg.reply(`Se ha saltado ${player.queue.current.title}`);
   },
+  executeReaction(user, player) {
+    const { voice } = user;
+
+    // Comprueba si existen reproductores en el servidor
+    if (!player) return;
+
+    // Comprueba si el usuario se encuentra dentro de un canal de voz
+    if (!voice) return;
+
+    // Comprueba si el usuario se encuenetra en el mismo canal de voz
+    if (voice.channelID !== player.voiceChannel) return;
+
+    // Comprueba si hay canciones en la cola
+    if (!player.queue.current) return;
+
+    return player.stop();
+  },
 };

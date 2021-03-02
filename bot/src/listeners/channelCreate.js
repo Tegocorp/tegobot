@@ -7,7 +7,8 @@ module.exports = {
     if (channel.name === 'tego-music')
       channel
         .send(
-          'Unete a un canal de voz y escribe el nombre/url de la canción a buscar.\n' +
+          '__**Canal de gestión:**__\n' +
+            'Escribe el nombre/url de la canción a buscar.\n' +
             '\u200B',
           { embed: playerEmbeds.player() }
         )
@@ -18,6 +19,12 @@ module.exports = {
           };
 
           await Music.findOneAndUpdate(musicFilter, musicUpdate);
+
+          return msg
+            .react('⏹')
+            .then(() => msg.react('⏯️'))
+            .then(() => msg.react('⏭️'))
+            .then(() => msg.react('🔀'));
         });
   },
 };
