@@ -52,16 +52,14 @@ module.exports = {
               );
             }
 
-            if (this.isManagementChannel) {
-              return msg.delete();
-            } else {
+            if (this.isManagementChannel) return msg.delete();
+            else
               return sendMessage(
                 msg,
                 'default',
                 songAddOutside,
                 this.deleteMsg
               );
-            }
           case 'PLAYLIST_LOADED':
             // Mensaje que se enviará al agregar una playlist a la cola
             const playlistAddEmbed = playEmbeds.playlistAddEmbed(

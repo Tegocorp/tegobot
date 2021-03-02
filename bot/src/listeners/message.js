@@ -22,7 +22,7 @@ module.exports = {
         playerCommand.isManagementChannel = true;
 
         // Realiza la ejecución del comando play
-        const query = getArgs(msg.content, basePrefix);
+        const query = getArgs(msg.content, basePrefix, true);
         return playerCommand.execute(msg, query);
       } else return;
     }
