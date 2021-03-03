@@ -1,9 +1,8 @@
-const { playerEmbeds } = require('../utils/embeds');
-const Music = require('../repository/mongo/models/Music');
+const { playerEmbeds } = require('../../utils/embeds');
+const Music = require('../../repository/mongo/models/Music');
 
 module.exports = {
   name: 'queueEnd',
-  manager: true,
   async execute(client, player) {
     const guild = client.guilds.cache.get(player.guild);
 

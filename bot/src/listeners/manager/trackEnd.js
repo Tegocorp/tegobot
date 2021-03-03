@@ -1,8 +1,7 @@
-const Music = require('../repository/mongo/models/Music');
+const Music = require('../../repository/mongo/models/Music');
 
 module.exports = {
   name: 'trackEnd',
-  manager: true,
   async execute(client, player, track, payload) {
     const guild = client.guilds.cache.get(player.guild);
 

@@ -1,5 +1,5 @@
-const { playerEmbeds } = require('../utils/embeds');
-const Music = require('../repository/mongo/models/Music');
+const { playerEmbeds } = require('../../utils/embeds');
+const Music = require('../../repository/mongo/models/Music');
 
 module.exports = {
   name: 'channelCreate',

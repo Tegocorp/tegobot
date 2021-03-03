@@ -1,6 +1,5 @@
 module.exports = {
   name: 'nodeConnect',
-  manager: true,
   execute(client, node) {
     // Obtiene el identificador del nodo Lavalink
     const nodeId = node.options.identifier;

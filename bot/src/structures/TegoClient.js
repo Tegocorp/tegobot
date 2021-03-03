@@ -41,18 +41,26 @@ module.exports = class TegoClient extends Client {
 
   /** Prepara los eventos del cliente y erela */
   _setupEventListeners() {
-    const listeners = fs
-      .readdirSync(join(__dirname, '..', 'listeners'))
+    const clientListeners = fs
+      .readdirSync(join(__dirname, '..', 'listeners', 'client'))
       .filter((file) => file.endsWith('.js'));
 
-    for (const file of listeners) {
-      const listener = require(`../listeners/${file}`);
+    const managerListeners = fs
+      .readdirSync(join(__dirname, '..', 'listeners', 'manager'))
+      .filter((file) => file.endsWith('.js'));
 
-      if (listener.manager)
-        this.manager.on(listener.name, (...args) =>
-          listener.execute(this, ...args)
-        );
-      else this.on(listener.name, (...args) => listener.execute(this, ...args));
+    for (const file of clientListeners) {
+      const listener = require(`../listeners/client/${file}`);
+
+      this.on(listener.name, (...args) => listener.execute(this, ...args));
+    }
+
+    for (const file of managerListeners) {
+      const listener = require(`../listeners/manager/${file}`);
+
+      this.manager.on(listener.name, (...args) =>
+        listener.execute(this, ...args)
+      );
     }
   }
 

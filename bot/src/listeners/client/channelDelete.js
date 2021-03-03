@@ -1,4 +1,4 @@
-const Music = require('../repository/mongo/models/Music');
+const Music = require('../../repository/mongo/models/Music');
 
 module.exports = {
   name: 'channelDelete',

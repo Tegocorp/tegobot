@@ -1,5 +1,5 @@
-const { getArgs } = require('../utils/index');
-const { prefix: basePrefix } = require('../config');
+const { getArgs } = require('../../utils/index');
+const { prefix: basePrefix } = require('../../config');
 
 module.exports = {
   name: 'message',
