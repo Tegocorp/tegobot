@@ -14,11 +14,9 @@ module.exports = {
         )
         .then(async (msg) => {
           const musicFilter = { guildId: channel.guild.id };
-          const musicUpdate = {
-            'playerData.messageId': msg.id,
-          };
+          const musicUpdate = { 'playerData.messageId': msg.id };
 
-          await Music.findOneAndUpdate(musicFilter, musicUpdate);
+          await Music.updateOne(musicFilter, musicUpdate);
 
           return msg
             .react('⏹')

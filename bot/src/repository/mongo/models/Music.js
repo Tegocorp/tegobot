@@ -1,6 +1,7 @@
 const { model, Schema } = require('mongoose');
 
 const musicSchema = new Schema({
+  queue: { type: Array },
   guildId: { type: String, index: true, unique: true },
   configured: { type: Boolean, default: false },
   playerData: {

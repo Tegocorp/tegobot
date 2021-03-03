@@ -38,19 +38,8 @@ module.exports = {
               'No se han encontrado resultados sobre tu busqueda.'
             );
           case 'TRACK_LOADED':
-            // Mensaje que se enviará al agregar una canción a la cola
-            const songAdd = playEmbeds.songAdd(song, player.queue.totalSize);
-
             // Mensaje que se enviará si el mensaje ha sido enviado fuera
             const songAddOutside = playEmbeds.songAddOutside(managementChannel);
-
-            // Easteregg de Tego Calderón al reproducir una canción suya
-            if (song.title.toLowerCase().includes('tego')) {
-              songAdd.addField(
-                'Frase de Tego Calderón',
-                'Yo soy el maracachimba, el feo de las nenas lindas.'
-              );
-            }
 
             if (this.isManagementChannel) return msg.delete();
             else

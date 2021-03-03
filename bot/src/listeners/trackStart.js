@@ -16,6 +16,8 @@ module.exports = {
       player.volume,
       player.queue.size + 1
     );
+
+    // Edita el mensaje del reproductor
     return playerMessage.edit(playerWithContent);
   },
 };

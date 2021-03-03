@@ -22,7 +22,7 @@ module.exports = {
           'playerData.textChannelId': channel.id,
         };
 
-        await Music.findOneAndUpdate(musicFilter, musicUpdate);
+        await Music.updateOne(musicFilter, musicUpdate);
 
         // Envía el mensaje de confirmación
         const setupEmbed = setupEmbeds.setupEmbed(channel.toString());

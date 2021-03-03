@@ -73,7 +73,7 @@ module.exports = class TegoMusic {
    * @return {Promise}
    */
   playRequested(result) {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
       const player = this.player;
 
       switch (result.loadType) {
@@ -85,6 +85,12 @@ module.exports = class TegoMusic {
         // Ejecuta cuando ha encontado resultados (url, consulta)
         case 'TRACK_LOADED':
         case 'SEARCH_RESULT':
+          const musicFilter = { guildId: player.guild };
+          const musicUpdate = { $push: { queue: result.tracks[0] } };
+
+          // Añade la canción a la array queue de la db
+          await Music.updateOne(musicFilter, musicUpdate);
+
           player.queue.add(result.tracks[0]);
 
           if (!player.playing && !player.paused && !player.queue.size)
@@ -127,16 +133,12 @@ module.exports = class TegoMusic {
     };
 
     // Busca si existen datos del servidor en la db
-    const musicModel = await Music.findOne({
-      guildId: this.guild.id,
-    });
+    const musicModel = await Music.findOne({ guildId: this.guild.id });
 
     if (musicModel) {
       setServerData(musicModel);
     } else {
-      const newMusicModel = await Music.create({
-        guildId: this.guild.id,
-      });
+      const newMusicModel = await Music.create({ guildId: this.guild.id });
 
       setServerData(newMusicModel);
     }
