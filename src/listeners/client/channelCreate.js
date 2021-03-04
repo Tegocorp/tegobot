@@ -6,12 +6,9 @@ module.exports = {
   execute(client, channel) {
     if (channel.name === 'tego-music')
       channel
-        .send(
-          '__**Canal de gestión:**__\n' +
-            'Escribe el nombre/url de la canción a buscar.\n' +
-            '\u200B',
-          { embed: playerEmbeds.player() }
-        )
+        .send('Escribe el nombre/url de la canción a buscar.\n' + '\u200B', {
+          embed: playerEmbeds.player(),
+        })
         .then(async (msg) => {
           const musicFilter = { guildId: channel.guild.id };
           const musicUpdate = { 'playerData.messageId': msg.id };

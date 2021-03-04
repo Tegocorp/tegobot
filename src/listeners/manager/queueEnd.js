@@ -22,6 +22,9 @@ module.exports = {
     const playerEmbed = playerEmbeds.player();
 
     // Edita el mensaje del reproductor
-    return playerMessage.edit(playerEmbed);
+    return playerMessage.edit(
+      'Escribe el nombre/url de la canción a buscar.\n' + '\u200B',
+      playerEmbed
+    );
   },
 };

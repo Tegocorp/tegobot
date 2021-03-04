@@ -93,8 +93,17 @@ module.exports = class TegoMusic {
 
           player.queue.add(result.tracks[0]);
 
-          if (!player.playing && !player.paused && !player.queue.size)
+          if (!player.playing && !player.paused && !player.queue.size) {
+            // Edita el mensaje del reproductor
+            this.playerMessage.edit(
+              'Escribe el nombre/url de la canción a buscar.\n' +
+                '__**Canciones en la cola:**__\n' +
+                `https://tegobot.com/queue?id=${this.guild.id}\n` +
+                '\u200B'
+            );
+
             player.play();
+          }
 
           return resolve('TRACK_LOADED');
         // Ejecuta cuando se ha cargado la playlist introducida
