@@ -1,7 +1,6 @@
 const { model, Schema } = require('mongoose');
 
-const musicSchema = new Schema({
-  queue: { type: Array },
+const MusicSchema = new Schema({
   guildId: { type: String, index: true, unique: true },
   configured: { type: Boolean, default: false },
   playerData: {
@@ -11,4 +10,4 @@ const musicSchema = new Schema({
   },
 });
 
-module.exports = model('Music', musicSchema, 'music_data');
+module.exports = model('Music', MusicSchema, 'music_data');

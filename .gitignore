@@ -1,15 +1,8 @@
 # General
 .DS_Store
 
-# Website
-website
-
 # Bot src
 bot/src/commands/test.js
-
-# Lavalink
-Lavalink.jar
-application.yml
 
 # Logs
 logs

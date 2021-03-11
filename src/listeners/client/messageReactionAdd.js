@@ -15,14 +15,39 @@ module.exports = {
     const emoji = reaction._emoji.name;
 
     if (reactionChannelId === musicData.player.textChannel) {
-      const player = client.manager.get(guildId);
+      const manager = client.manager;
+      const player = manager.get(guildId);
       const userData = members.cache.get(user.id);
 
-      if (emoji === '⏭️') {
-        const skipCommand = commands.get('skip');
+      try {
+        await reaction.users.remove(user.id);
 
-        // Realiza la ejecución del comando
-        return skipCommand.executeReaction(userData, player);
+        switch (emoji) {
+          case '⏹':
+            const stopCommand = commands.get('stop');
+
+            // Realiza la ejecución del comando
+            return stopCommand.executeReaction(userData, player, manager);
+          case '⏯️':
+            const pPauseCommand = commands.get('ppause');
+
+            // Realiza la ejecución del comando
+            return pPauseCommand.executeReaction(userData, player);
+          case '⏭️':
+            const skipCommand = commands.get('skip');
+
+            // Realiza la ejecución del comando
+            return skipCommand.executeReaction(userData, player);
+          case '🔀':
+            const shuffleCommand = commands.get('shuffle');
+
+            // Realiza la ejecución del comando
+            return shuffleCommand.executeReaction(userData, player);
+        }
+      } catch (error) {
+        console.error(
+          `Ha ocurrido un error tratando de ejecutar la reacción (${emoji} ): ${error.message}`
+        );
       }
     }
   },

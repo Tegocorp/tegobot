@@ -1,11 +1,12 @@
 const fs = require('fs');
 const { join } = require('path');
 const { Manager } = require('erela.js');
+const Spotify = require('erela.js-spotify');
 const { Client, Collection } = require('discord.js');
 
 require('../extensions');
 const repository = require('../repository');
-const { token, lavalinkNodes } = require('../config');
+const { bot: config, spotify } = require('../config');
 
 /** Clase TegoClient */
 module.exports = class TegoClient extends Client {
@@ -19,7 +20,13 @@ module.exports = class TegoClient extends Client {
     this.commands = new Collection();
     this.cooldowns = new Collection();
     this.manager = new Manager({
-      nodes: lavalinkNodes,
+      plugins: [
+        new Spotify({
+          clientID: spotify.clientID,
+          clientSecret: spotify.clientSecret,
+        }),
+      ],
+      nodes: config.lavalinkNodes,
       send: (id, payload) => {
         const guild = this.guilds.cache.get(id);
         if (guild) guild.shard.send(payload);
@@ -66,7 +73,7 @@ module.exports = class TegoClient extends Client {
 
   /** Inicializa el cliente discord.js con Lavalink (erela) */
   initialize() {
-    this.login(token);
+    this.login(config.token);
     this._setupEventListeners();
     this.addCommandsToCollection();
   }

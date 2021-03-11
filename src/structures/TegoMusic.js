@@ -85,12 +85,6 @@ module.exports = class TegoMusic {
         // Ejecuta cuando ha encontado resultados (url, consulta)
         case 'TRACK_LOADED':
         case 'SEARCH_RESULT':
-          const musicFilter = { guildId: player.guild };
-          const musicUpdate = { $push: { queue: result.tracks[0] } };
-
-          // Añade la canción a la array queue de la db
-          await Music.updateOne(musicFilter, musicUpdate);
-
           player.queue.add(result.tracks[0]);
 
           if (!player.playing && !player.paused && !player.queue.size) {
@@ -98,7 +92,7 @@ module.exports = class TegoMusic {
             this.playerMessage.edit(
               'Escribe el nombre/url de la canción a buscar.\n' +
                 '__**Canciones en la cola:**__\n' +
-                `https://tegobot.com/queue?id=${this.guild.id}\n` +
+                `https://tegobot.com/dashboard/guild/queue/${this.guild.id}\n` +
                 '\u200B'
             );
 

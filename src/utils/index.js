@@ -1,7 +1,7 @@
 const getArgs = (content, prefix, management) => {
   // Comprueba si el mensaje ha sido enviado en el canal de gestión
-  if (management) return content.trim().split(/ + /);
-  else return content.slice(prefix.length).trim().split(/ + /);
+  if (management) return content.trim().split(/ +/);
+  else return content.slice(prefix.length).trim().split(/ +/);
 };
 
 const sendMessage = (msg, type, content, deleteMsg) => {

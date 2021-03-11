@@ -5,9 +5,10 @@ module.exports = {
   aliases: ['s', 'sk'],
   description: 'Salta a la siguiente canción de la cola.',
   execute(msg) {
-    const { channel } = msg.member.voice;
+    const { channel: voiceChannel } = msg.member.voice;
 
     const player = msg.client.manager.get(msg.guild.id);
+
     // Comprueba si existen reproductores en el servidor
     if (!player)
       return msg.reply(
@@ -16,12 +17,12 @@ module.exports = {
       );
 
     // Comprueba si el usuario se encuentra dentro de un canal de voz
-    if (!channel)
+    if (!voiceChannel)
       return msg.reply(
         'Necesitas unirte a un canal de voz para ejecutar este comando.'
       );
     // Comprueba si el usuario se encuenetra en el mismo canal de voz
-    if (channel.id !== player.voiceChannel)
+    if (voiceChannel.id !== player.voiceChannel)
       return msg.reply(
         'Necesitas estar en el mismo canal de voz para ejecutar este comando.'
       );
@@ -34,20 +35,14 @@ module.exports = {
     return msg.reply(`Se ha saltado ${player.queue.current.title}`);
   },
   executeReaction(user, player) {
-    const { voice } = user;
+    const { channel: voiceChannel } = user.voice;
 
-    // Comprueba si existen reproductores en el servidor
     if (!player) return;
+    if (!voiceChannel) return;
+    if (voiceChannel.id !== player.voiceChannel) return;
 
-    // Comprueba si el usuario se encuentra dentro de un canal de voz
-    if (!voice) return;
-
-    // Comprueba si el usuario se encuenetra en el mismo canal de voz
-    if (voice.channelID !== player.voiceChannel) return;
-
-    // Comprueba si hay canciones en la cola
     if (!player.queue.current) return;
 
-    return player.stop();
+    player.stop();
   },
 };

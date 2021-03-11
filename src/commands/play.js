@@ -38,7 +38,7 @@ module.exports = {
               'No se han encontrado resultados sobre tu busqueda.'
             );
           case 'TRACK_LOADED':
-            // Mensaje que se enviará si el mensaje ha sido enviado fuera
+            // Embed que se enviará si el mensaje ha sido enviado fuera
             const songAddOutside = playEmbeds.songAddOutside(managementChannel);
 
             if (this.isManagementChannel) return msg.delete();
@@ -50,7 +50,7 @@ module.exports = {
                 this.deleteMsg
               );
           case 'PLAYLIST_LOADED':
-            // Mensaje que se enviará al agregar una playlist a la cola
+            // Embed que se enviará al agregar una playlist a la cola
             const playlistAddEmbed = playEmbeds.playlistAddEmbed(
               song,
               searchResults,

@@ -1,9 +1,11 @@
+const { bot: config } = require('../../config');
 const { getArgs } = require('../../utils/index');
-const { prefix: basePrefix } = require('../../config');
 
 module.exports = {
   name: 'message',
   async execute(client, msg) {
+    const basePrefix = config.prefix;
+
     const commands = client.commands;
     const { music, channels } = msg.guild;
 
@@ -23,7 +25,9 @@ module.exports = {
 
         // Realiza la ejecución del comando play
         const query = getArgs(msg.content, basePrefix, true);
-        return playerCommand.execute(msg, query);
+        return playerCommand
+          .execute(msg, query)
+          .catch((error) => console.error(error));
       } else return;
     }
 
@@ -63,7 +67,7 @@ module.exports = {
       command.execute(msg, args);
     } catch (error) {
       console.error(
-        `Ha ocurrido un error al tratar de ejecutar el comando (${command.name}): ${error.message}`
+        `Ha ocurrido un error tratando de ejecutar el comando (${command.name}): ${error.message}`
       );
     }
   },
