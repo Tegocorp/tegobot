@@ -26,44 +26,32 @@ module.exports = {
 
     const searchResults = await music.searchSong(args, msg.author);
 
-    music
-      .playRequested(searchResults)
-      .then((res) => {
-        const player = music.player;
-        const song = searchResults.tracks[0];
+    music.playRequested(searchResults).then((res) => {
+      switch (res) {
+        case 'NO_MATCHES':
+          // Mensaje que se enviará si no se han encontrado resultados
+          const msgContent =
+            'No se han encontrado resultados sobre tu busqueda.';
 
-        switch (res) {
-          case 'NO_MATCHES':
-            return msg.reply(
-              'No se han encontrado resultados sobre tu busqueda.'
-            );
-          case 'TRACK_LOADED':
-            // Embed que se enviará si el mensaje ha sido enviado fuera
-            const songAddOutside = playEmbeds.songAddOutside(managementChannel);
+          if (this.isManagementChannel) return msg.delete();
+          else return sendMessage(msg, 'reply', msgContent, this.deleteMsg);
+        case 'TRACK_LOADED':
+          // Embed que se enviará si el mensaje ha sido enviado fuera
+          const songAddOutside = playEmbeds.songAddOutside(managementChannel);
 
-            if (this.isManagementChannel) return msg.delete();
-            else
-              return sendMessage(
-                msg,
-                'default',
-                songAddOutside,
-                this.deleteMsg
-              );
-          case 'PLAYLIST_LOADED':
-            // Embed que se enviará al agregar una playlist a la cola
-            const playlistAddEmbed = playEmbeds.playlistAddEmbed(
-              song,
-              searchResults,
-              player.queue.totalSize
-            );
+          if (this.isManagementChannel) return msg.delete();
+          else
+            return sendMessage(msg, 'default', songAddOutside, this.deleteMsg);
+        case 'PLAYLIST_LOADED':
+          // Embed que se enviará al agregar una playlist a la cola
+          const playlistAdd = playEmbeds.playlistAddOutside(
+            args[0],
+            searchResults
+          );
 
-            return msg.channel.send(playlistAddEmbed);
-        }
-      })
-      .catch((error) => {
-        msg.reply(
-          `Ha ocurrido un error mientras se buscaba la canción: ${error.message}`
-        );
-      });
+          if (this.isManagementChannel) return msg.delete();
+          else return sendMessage(msg, 'default', playlistAdd, this.deleteMsg);
+      }
+    });
   },
 };
